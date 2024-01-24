@@ -23,9 +23,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun startCine(
+fun StartCine(
     modifier: Modifier = Modifier,
-) {
+    onNavigateToLoginScreen: () -> Unit
+
+    ) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -54,27 +56,12 @@ fun startCine(
                     modifier = Modifier.padding(end = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    // Botón "Registrarse"
-                    Button(
-                        onClick = { /* Acción al hacer clic */ },
-                        modifier = Modifier
-                            .height(40.dp) // Tamaño un poco más grande
-                            .padding(horizontal = 8.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White,
-                            contentColor = MaterialTheme.colorScheme.primary
-                        ),
-                        elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 0.dp)
-                    ) {
-                        Text(
-                            "Registrarse",
-                            overflow = TextOverflow.Ellipsis,
-                            fontSize = 12.sp)
-                    }
-
                     // Botón "Iniciar Sesión"
                     Button(
-                        onClick = { /* Acción al hacer clic */ },
+                        onClick = {
+                            // Llamamos a la función proporcionada para navegar a la pantalla de inicio de sesión
+                            onNavigateToLoginScreen()
+                        },
                         modifier = Modifier
                             .height(40.dp) // Tamaño un poco más grande
                             .padding(horizontal = 8.dp),
@@ -105,3 +92,4 @@ fun startCine(
         }
     }
 }
+

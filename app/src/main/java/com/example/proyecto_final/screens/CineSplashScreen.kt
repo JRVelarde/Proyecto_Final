@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.proyecto_final.navigation.CineScreens
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
 @Composable
@@ -42,7 +43,17 @@ fun CineSplashScreen(navController: NavController){
             )
 
         delay(3500L)
-        navController.navigate(CineScreens.LoginScreen.name)
+        //navController.navigate(CineScreens.LoginScreen.name)
+        if (FirebaseAuth.getInstance().currentUser?.email.isNullOrEmpty()){
+            navController.navigate(CineScreens.LoginScreen.name)
+        }
+        else{
+            navController.navigate(CineScreens.CineHomeScreen.name){
+                popUpTo(CineScreens.SplashScreen.name){
+                    inclusive = true
+                }
+            }
+        }
     }
     val color = MaterialTheme.colorScheme.primary
     Surface (

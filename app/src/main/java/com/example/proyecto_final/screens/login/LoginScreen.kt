@@ -149,7 +149,7 @@ fun SubmitButton(
 ) {
     Button(
         onClick = {
-            onClic
+            onClic()
         },
         modifier = Modifier
             .padding(3.dp)

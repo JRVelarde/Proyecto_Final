@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
 class LoginScreenViewModel: ViewModel() {
@@ -17,23 +18,37 @@ class LoginScreenViewModel: ViewModel() {
         email: String,
         password: String,
         home: () -> Unit) = viewModelScope.launch {
-        try{
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnSuccessListener {authResult->
-                    Log.d("FB", "" +
-                            "singInWithEmailAndPassword Logueado!!!: ${authResult.toString()}")
-                    home()
-                }
-                .addOnFailureListener{ex->
-                    // código cuando falla
-                    // Tienes acceso a la excepción
-                    Log.d("FB", "" +
-                            "singInWithEmailAndPassword Falló!!!: ${ex.localizedMessage}")
-                    //errorLogueo()
-                }
-        }catch (ex:Exception){
-            Log.d("Logueado","signInWithEmailAndPassword: ${ex.message}")
-        }
+            try{
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task->
+                        if (task.isSuccessful){
+                            val displayName =
+                                task.result.user?.email?.split("@")?.get(0)
+                            createUser(displayName)
+                            Log.d("Logueado", "signInWithEmailAndPassword logueado!!")
+                            home()
+                        }else{
+                            Log.d("Logueado", "signInWithEmailAndPassword: ${task.result.toString()}")
+                        }
+                    }
+            }catch (ex:Exception){
+                    Log.d("Logueado", "signInWithEmailAndPassword: ${ex.message}")
+            }
+    }
+
+    private fun createUser(displayName: String?) {
+        val userId = auth.currentUser?.uid
+        val user = mutableMapOf<String, Any>()
+
+        user["user_id"] = userId.toString()
+        user["display_name"] = displayName.toString()
+        FirebaseFirestore.getInstance().collection("users")
+            .add(user)
+            .addOnSuccessListener {
+                Log.d("Logueado", "Creado ${it.id}")
+            }.addOnFailureListener{
+                Log.d("Logueado", "Ocurrió error ${it}")
+            }
     }
 
     fun createUserWithEmailAndPassword(

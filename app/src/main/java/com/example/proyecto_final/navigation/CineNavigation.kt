@@ -23,7 +23,7 @@ fun CineNavigation(){
             LogInScreen(navController = navController)
         }
         composable(CineScreens.CineHomeScreen.name){
-            Home()
+            Home(navController = navController)
         }
         composable(CineScreens.PerfilScreen.name){
             Perfiles(navController = navController)

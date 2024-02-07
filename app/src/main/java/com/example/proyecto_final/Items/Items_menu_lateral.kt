@@ -2,6 +2,7 @@ package com.example.proyecto_final.Items
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBox
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -26,5 +27,11 @@ sealed class Items_menu_lateral(
         Icons.Outlined.Map,
         "Mapa",
         CineScreens.MapaScreen.name
+    )
+
+    object Item_menu_lateral4 : Items_menu_lateral(
+        Icons.Outlined.Home,
+        "Inicio",
+        CineScreens.CineHomeScreen.name
     )
 }

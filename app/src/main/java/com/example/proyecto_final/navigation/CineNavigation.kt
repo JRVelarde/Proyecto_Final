@@ -7,6 +7,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.proyecto_final.screens.CineSplashScreen
 import com.example.proyecto_final.screens.home.Home
 import com.example.proyecto_final.screens.login.LogInScreen
+import com.example.proyecto_final.screens.mapa.Mapas
+import com.example.proyecto_final.screens.sesiones.Sesiones
+import com.example.proyecto_final.screens.usuario.Perfiles
 
 @Composable
 fun CineNavigation(){
@@ -22,5 +25,15 @@ fun CineNavigation(){
         composable(CineScreens.CineHomeScreen.name){
             Home(navController = navController)
         }
+        composable(CineScreens.PerfilScreen.name){
+            Perfiles(navController = navController)
+        }
+        composable(CineScreens.MapaScreen.name){
+            Mapas(navController = navController)
+        }
+        composable(CineScreens.SesionesScreen.name){
+            Sesiones(navController = navController)
+        }
+
     }
 }

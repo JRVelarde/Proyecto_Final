@@ -79,5 +79,5 @@ class LoginScreenViewModel: ViewModel() {
                 Log.d("Logueado", "Ocurrió error $it")
             }
     }
-
 }
+

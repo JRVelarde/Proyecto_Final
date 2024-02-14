@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import com.example.proyecto_final.navigation.CineNavigation
 import com.example.proyecto_final.theme.Proyecto_FinalTheme
 
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

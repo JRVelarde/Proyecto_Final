@@ -4,7 +4,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Map
-import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.proyecto_final.navigation.CineScreens
 
@@ -17,11 +16,6 @@ sealed class Items_menu_lateral(
         Icons.Outlined.AccountBox,
         "Cuenta",
         CineScreens.PerfilScreen.name
-    )
-    object Item_menu_lateral2 : Items_menu_lateral(
-        Icons.Outlined.Movie,
-        "Sesiones cerca",
-        CineScreens.SesionesScreen.name
     )
     object Item_menu_lateral3 : Items_menu_lateral(
         Icons.Outlined.Map,

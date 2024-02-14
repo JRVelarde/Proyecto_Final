@@ -88,7 +88,6 @@ fun MenuLateral(
     val scope = rememberCoroutineScope()
     val menuItems = listOf(
         Items_menu_lateral.Item_menu_lateral4,
-        Items_menu_lateral.Item_menu_lateral2,
         Items_menu_lateral.Item_menu_lateral3
     )
 

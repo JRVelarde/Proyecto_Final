@@ -8,7 +8,6 @@ import com.example.proyecto_final.screens.CineSplashScreen
 import com.example.proyecto_final.screens.home.Home
 import com.example.proyecto_final.screens.login.LogInScreen
 import com.example.proyecto_final.screens.mapa.Mapas
-import com.example.proyecto_final.screens.sesiones.Sesiones
 import com.example.proyecto_final.screens.usuario.Perfiles
 
 @Composable
@@ -30,9 +29,6 @@ fun CineNavigation(){
         }
         composable(CineScreens.MapaScreen.name){
             Mapas(navController = navController)
-        }
-        composable(CineScreens.SesionesScreen.name){
-            Sesiones(navController = navController)
         }
 
     }

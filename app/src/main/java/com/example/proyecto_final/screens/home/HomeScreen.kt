@@ -2,14 +2,18 @@ package com.example.proyecto_final.screens.home
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,45 +35,20 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun Home(
-    navController: NavController,
-
-) {
-
-    val drawerState = rememberDrawerState(
-        initialValue = DrawerValue.Closed)
-    MenuLateral(
-        navController = navController,
-        drawerState = drawerState
-    ) {
-        val viewModel: HomeScreenViewModel = viewModel()
-
-        LaunchedEffect(Unit){
-            viewModel.leerDatos()
-        }
-        Contenido(
-            viewModel = viewModel
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MenuLateral(
-    navController: NavController,
-    drawerState: DrawerState,
-    contenido: @Composable () -> Unit
-) {
+fun Home(navController: NavController) {
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val menuItems = listOf(
-        Items_menu_lateral.Item_menu_lateral1,
-        Items_menu_lateral.Item_menu_lateral3
-    )
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
+                val scope = rememberCoroutineScope()
+                val menuItems = listOf(
+                    Items_menu_lateral.Item_menu_lateral1,
+                    Items_menu_lateral.Item_menu_lateral3
+                )
+
                 menuItems.forEach { item ->
                     NavigationDrawerItem(
                         icon = {
@@ -81,39 +60,60 @@ fun MenuLateral(
                             scope.launch {
                                 drawerState.close()
                             }
-                            navController.navigate(item.ruta) // Usa el NavHostController principal
+                            navController.navigate(item.ruta)
                         }
                     )
                 }
             }
-        }
+        },
+        modifier = Modifier
+            .fillMaxHeight()
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        contenido()
-    }
-}
-
-@Composable
-fun Contenido(
-    viewModel: HomeScreenViewModel
-) {
-    val sesiones by viewModel.sesiones.collectAsState()
-    Log.d("Contenido", "Número de sesiones en el estado: ${sesiones.size}")
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        // Aquí puedes mostrar las sesiones en tu diseño
-        if (sesiones.isNotEmpty()) {
-            Log.d("Sesiones", "Data del documento: ${sesiones[1].cine}")
-
-            LazyColumn {
-                items(sesiones) { sesion ->
-                    SesionesCard(sesion = sesion)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(text = "Cines")
+                },
+                navigationIcon = {
+                    val scope = rememberCoroutineScope()
+                    IconButton(onClick = {
+                        scope.launch {
+                            drawerState.open()
+                        }
+                    }) {
+                        Icon(Icons.Outlined.Menu, "Abrir Menú Lateral")
+                    }
                 }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Aquí puedes mostrar las sesiones en tu diseño
+            val viewModel: HomeScreenViewModel = viewModel()
+
+            LaunchedEffect(Unit){
+                viewModel.leerDatos()
             }
-        } else {
-            Log.d("Sesiones", "La lista de sesiones está vacía")
+
+            val sesiones by viewModel.sesiones.collectAsState()
+            Log.d("Contenido", "Número de sesiones en el estado: ${sesiones.size}")
+
+            if (sesiones.isNotEmpty()) {
+                Log.d("Sesiones", "Data del documento: ${sesiones[1].cine}")
+
+                LazyColumn {
+
+                    items(sesiones) { sesion ->
+                        SesionesCard(sesion = sesion)
+                    }
+                }
+            } else {
+                Log.d("Sesiones", "La lista de sesiones está vacía")
+            }
         }
     }
 }

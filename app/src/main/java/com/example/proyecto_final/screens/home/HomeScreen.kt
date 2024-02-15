@@ -48,7 +48,6 @@ fun Home(
             viewModel.leerDatos()
         }
         Contenido(
-            drawerState = drawerState,
             viewModel = viewModel
         )
     }
@@ -93,11 +92,8 @@ fun MenuLateral(
     }
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Contenido(
-    drawerState: DrawerState,
     viewModel: HomeScreenViewModel
 ) {
     val sesiones by viewModel.sesiones.collectAsState()
@@ -109,13 +105,15 @@ fun Contenido(
     ) {
         // Aquí puedes mostrar las sesiones en tu diseño
         if (sesiones.isNotEmpty()) {
-            LazyColumn{
-                items(sesiones){sesion ->
+            Log.d("Sesiones", "Data del documento: ${sesiones[1].cine}")
+
+            LazyColumn {
+                items(sesiones) { sesion ->
                     SesionesCard(sesion = sesion)
                 }
             }
         } else {
-            // Puedes agregar un mensaje o indicador de carga aquí
+            Log.d("Sesiones", "La lista de sesiones está vacía")
         }
     }
 }
@@ -123,7 +121,7 @@ fun Contenido(
 
 @Composable
 fun SesionesCard(sesion: Sesions) {
-    Log.d("SesionesCard", "Mostrando tarjeta para sesión: ${sesion.titulo}")
+    Log.d("SesionesCard", "Mostrando tarjeta para sesión: $sesion")
     Card(
         modifier = Modifier
             .fillMaxWidth()

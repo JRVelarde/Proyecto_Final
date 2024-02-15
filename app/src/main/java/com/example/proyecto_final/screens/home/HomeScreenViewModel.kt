@@ -20,9 +20,13 @@ class HomeScreenViewModel: ViewModel() {
            .get()
            .addOnSuccessListener { result ->
                for(document in result){
+                   try{
                    Log.d("Sesiones", "${document.id} => ${document.data}")
                    val sesion = document.toObject(Sesions::class.java)
                    sesionesList.add(sesion)
+               }catch (e: Exception){
+                   Log.e("sesiones","Error");
+               }
                }
                _sesiones.value = sesionesList
            }

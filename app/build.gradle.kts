@@ -68,6 +68,7 @@ dependencies {
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.maps.android:maps-compose:2.11.2")
     implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.19.0")
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.6")
     implementation("androidx.navigation:navigation-compose:2.7.6")
     implementation("androidx.compose.material:material-icons-extended:1.6.0")

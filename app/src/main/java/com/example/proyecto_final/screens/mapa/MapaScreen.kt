@@ -1,73 +1,169 @@
 package com.example.proyecto_final.screens.mapa
 
+import android.annotation.SuppressLint
+import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.proyecto_final.Items.Items_menu_lateral
 import com.example.proyecto_final.navigation.rutaActual
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Mapas(
     navController: NavController
-){
+) {
     val drawerState = rememberDrawerState(
-        initialValue = DrawerValue.Closed)
+        initialValue = DrawerValue.Closed
+    )
 
-        val scope = rememberCoroutineScope()
-        val menuItems = listOf(
-            Items_menu_lateral.Item_menu_lateral4,
-            Items_menu_lateral.Item_menu_lateral1,
-        )
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // Botón de apertura del menú lateral
-            menuItems.forEach { item ->
-                NavigationDrawerItem(
-                    icon = {
-                        Icon(item.icon, contentDescription = null)
-                    },
-                    label = { Text(text = item.title) },
-                    selected = rutaActual(navController) == item.ruta,
-                    onClick = {
-                        scope.launch {
-                            drawerState.close()
-                        }
-                        navController.navigate(item.ruta) // Usa el NavHostController principal
-                    }
+    val scope = rememberCoroutineScope()
+    val menuItems = listOf(
+        Items_menu_lateral.Item_menu_lateral4,
+        Items_menu_lateral.Item_menu_lateral1,
+    )
+
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                val scope = rememberCoroutineScope()
+                val menuItems = listOf(
+                    Items_menu_lateral.Item_menu_lateral1,
+                    Items_menu_lateral.Item_menu_lateral3
                 )
-            }
 
-            // Mapa
+                menuItems.forEach { item ->
+                    NavigationDrawerItem(
+                        icon = {
+                            Icon(item.icon, contentDescription = null)
+                        },
+                        label = { Text(text = item.title) },
+                        selected = rutaActual(navController) == item.ruta,
+                        onClick = {
+                            scope.launch {
+                                drawerState.close()
+                            }
+                            navController.navigate(item.ruta)
+                        }
+                    )
+                }
+            }
+        },
+        gesturesEnabled = false,
+        modifier = Modifier
+            .fillMaxHeight()
+            .background(MaterialTheme.colorScheme.background)
+
+    ){
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(text = "Mapas")
+                },
+                navigationIcon = {
+                    val scope = rememberCoroutineScope()
+                    IconButton(onClick = {
+                        scope.launch {
+                            drawerState.open()
+                        }
+                    }) {
+                        Icon(Icons.Outlined.Menu, "Abrir Menú Lateral")
+                    }
+                }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             MyGoogleMaps(
                 modifier = Modifier
                     .fillMaxSize()
             )
-
+        }
     }
-
 }
+
+@OptIn(ExperimentalPermissionsApi::class)
+@SuppressLint("MissingPermission")
 @Composable
 fun MyGoogleMaps(modifier: Modifier = Modifier) {
-   GoogleMap(
+    val context = LocalContext.current
+    val fusedLocationProvider = remember{
+        LocationServices.getFusedLocationProviderClient(context)
+    }
+    val cameraPositionState = rememberCameraPositionState{
+        CameraPosition(LatLng(0.0, 0.0),13f, 0f, 0f)
+    }
+    val locationPermissionState = rememberPermissionState(android.Manifest.permission.ACCESS_FINE_LOCATION)
+
+    LaunchedEffect(locationPermissionState) {
+        if (locationPermissionState.hasPermission) {
+            try {
+                val location = fusedLocationProvider.lastLocation.await()
+                location?.let {
+                    val latLng = LatLng(location.latitude, location.longitude)
+                    cameraPositionState.position = CameraPosition.fromLatLngZoom(latLng, 13f)
+                }
+                Log.e("Location", location.toString())
+            } catch (e: Exception) {
+                Log.e("MapScreen", "Error obtaining location: ${e.message}")
+            }
+        } else if (locationPermissionState.shouldShowRationale) {
+            // Handle rationale here if needed
+        } else {
+            // Request permission
+            locationPermissionState.launchPermissionRequest()
+        }
+    }
+    GoogleMap(
         modifier = modifier,
-        contentPadding = PaddingValues(0.dp)
-   )
+        cameraPositionState = cameraPositionState,
+        properties = MapProperties(isMyLocationEnabled = true),
+        uiSettings = MapUiSettings()
+    )
+
 }
 
 

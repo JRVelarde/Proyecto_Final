@@ -6,5 +6,6 @@ enum class CineScreens {
     CineHomeScreen,
     PerfilScreen,
     MapaScreen,
+    SesionScreen
 
 }

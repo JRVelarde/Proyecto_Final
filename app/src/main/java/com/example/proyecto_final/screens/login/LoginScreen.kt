@@ -38,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.proyecto_final.navigation.CineScreens
 
+
+
 @Composable
 fun LogInScreen(
     navController: NavController,

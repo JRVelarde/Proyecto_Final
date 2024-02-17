@@ -3,9 +3,9 @@ package com.example.proyecto_final.screens.mapa
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,15 +34,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.proyecto_final.Items.Items_menu_lateral
 import com.example.proyecto_final.navigation.rutaActual
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -55,22 +55,26 @@ fun Mapas(
     val drawerState = rememberDrawerState(
         initialValue = DrawerValue.Closed
     )
-
     val scope = rememberCoroutineScope()
-    val menuItems = listOf(
-        Items_menu_lateral.Item_menu_lateral4,
-        Items_menu_lateral.Item_menu_lateral1,
-    )
-
-
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
-                val scope = rememberCoroutineScope()
+            ModalDrawerSheet(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .background(MaterialTheme.colorScheme.background)
+                    .clickable {
+                        if (drawerState.isOpen) {
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        }
+                    }
+            ) {
+
                 val menuItems = listOf(
                     Items_menu_lateral.Item_menu_lateral1,
-                    Items_menu_lateral.Item_menu_lateral3
+                    Items_menu_lateral.Item_menu_lateral4
                 )
 
                 menuItems.forEach { item ->
@@ -106,7 +110,7 @@ fun Mapas(
                     Text(text = "Mapas")
                 },
                 navigationIcon = {
-                    val scope = rememberCoroutineScope()
+
                     IconButton(onClick = {
                         scope.launch {
                             drawerState.open()
@@ -125,7 +129,6 @@ fun Mapas(
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @SuppressLint("MissingPermission")
 @Composable
 fun MyGoogleMaps(modifier: Modifier = Modifier) {
@@ -136,36 +139,69 @@ fun MyGoogleMaps(modifier: Modifier = Modifier) {
     val cameraPositionState = rememberCameraPositionState{
         CameraPosition(LatLng(0.0, 0.0),13f, 0f, 0f)
     }
-    val locationPermissionState = rememberPermissionState(android.Manifest.permission.ACCESS_FINE_LOCATION)
+    val YelmoIsla = LatLng(40.363979, -3.738369)
+    val yelmoIslaMarkerState = rememberMarkerState(position = YelmoIsla)
 
-    LaunchedEffect(locationPermissionState) {
-        if (locationPermissionState.hasPermission) {
-            try {
-                val location = fusedLocationProvider.lastLocation.await()
-                location?.let {
-                    val latLng = LatLng(location.latitude, location.longitude)
-                    cameraPositionState.position = CameraPosition.fromLatLngZoom(latLng, 13f)
-                }
-                Log.e("Location", location.toString())
-            } catch (e: Exception) {
-                Log.e("MapScreen", "Error obtaining location: ${e.message}")
+    val Renoir = LatLng(40.424400, -3.713414)
+    val renoirMarkerState = rememberMarkerState(position = Renoir)
+
+    val CineCallao = LatLng(40.419983, -3.706109)
+    val cineCallaoMarkerState = rememberMarkerState(position = CineCallao)
+
+    val Dore = LatLng(40.411688, -3.699002)
+    val doreMarkerState = rememberMarkerState(position = Dore)
+
+    val Kinepolis = LatLng(40.393864,-3.796479)
+    val kinepolisMarkerState = rememberMarkerState(position = Kinepolis)
+
+    val CineEmbajadores = LatLng(40.400637, -3.698562)
+    val cineEmbajadoresMarkerState = rememberMarkerState(position = CineEmbajadores)
+
+    val GolemMadrid = LatLng(40.424618,-3.713605)
+    val golemMadridMarkerState = rememberMarkerState(position = GolemMadrid)
+
+    val YelmoCinesIdeal = LatLng(40.413665,-3.703888)
+    val yelmoCinesIdealMarkerState = rememberMarkerState(position = YelmoCinesIdeal)
+
+    val Vendi = LatLng(40.436569,-3.704077)
+    val vendiMarkerState = rememberMarkerState(position = Vendi)
+
+    val Capitol = LatLng(40.420512, -3.706678)
+    val capitolMarkerState = rememberMarkerState(position = Capitol)
+
+    LaunchedEffect(Unit){
+        try {
+            val location = fusedLocationProvider.lastLocation.await()
+            location?.let{
+                val latLng = LatLng(location.latitude, location.longitude)
+                cameraPositionState.position = CameraPosition.fromLatLngZoom(latLng, 13f)
             }
-        } else if (locationPermissionState.shouldShowRationale) {
-            // Handle rationale here if needed
-        } else {
-            // Request permission
-            locationPermissionState.launchPermissionRequest()
+            Log.e("Location", location.toString())
+
+        }catch (e: Exception){
+            Log.e("MapScreen", "Error obtaining location: ${e.message}")
+
         }
     }
+
     GoogleMap(
         modifier = modifier,
         cameraPositionState = cameraPositionState,
         properties = MapProperties(isMyLocationEnabled = true),
         uiSettings = MapUiSettings()
-    )
+    ){
+        Marker(state = yelmoIslaMarkerState)
+        Marker(state = renoirMarkerState)
+        Marker(state = cineCallaoMarkerState)
+        Marker(state = doreMarkerState)
+        Marker(state = kinepolisMarkerState)
+        Marker(state = cineEmbajadoresMarkerState)
+        Marker(state = golemMadridMarkerState)
+        Marker(state = yelmoCinesIdealMarkerState)
+        Marker(state = vendiMarkerState)
+        Marker(state = capitolMarkerState)
+    }
+
+
 
 }
-
-
-
-

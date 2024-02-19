@@ -264,6 +264,7 @@ fun SesionesDetail(sesion: Sesion, onBackClick: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.3f)
+                .height(400.dp)
         ){
             GoogleMap(
                 modifier = Modifier,
